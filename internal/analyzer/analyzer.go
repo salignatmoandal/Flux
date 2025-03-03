@@ -29,23 +29,23 @@ func (a *Analyzer) initClients() error {
 	case "aws":
 		client := cloud.NewAWSClient(a.config)
 		if err := client.Initialize(); err != nil {
-			return fmt.Errorf("erreur AWS: %w", err)
+			return fmt.Errorf("error AWS: %w", err)
 		}
 		a.clients["aws"] = client
 	case "gcp":
 		client := cloud.NewGCPClient(a.config)
 		if err := client.Initialize(); err != nil {
-			return fmt.Errorf("erreur GCP: %w", err)
+			return fmt.Errorf("error GCP: %w", err)
 		}
 		a.clients["gcp"] = client
 	case "azure":
 		client := cloud.NewAzureClient(a.config)
 		if err := client.Initialize(); err != nil {
-			return fmt.Errorf("erreur Azure: %w", err)
+			return fmt.Errorf("error Azure: %w", err)
 		}
 		a.clients["azure"] = client
 	default:
-		return fmt.Errorf("provider non supporté: %s", a.provider)
+		return fmt.Errorf("provider not supported: %s", a.provider)
 	}
 	return nil
 }

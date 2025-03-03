@@ -1,8 +1,11 @@
 package cloud
 
 import (
+	"context"
+	"strconv"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/costexplorer"
 	"github.com/salignatmoandal/flux/config"
 )
@@ -28,11 +31,41 @@ func (a *AWSClient) Initialize() error {
 }
 
 func (c *AWSClient) GetUnusedResources() ([]Resource, error) {
-	// Implémentation AWS
-	return nil, nil
+	// Implémentation pour AWS
+	resources := []Resource{
+		{
+			ID:           "i-123456",
+			Type:         "ec2",
+			Provider:     "aws",
+			LastUsed:     time.Now().Add(-24 * time.Hour),
+			CostPerHour:  0.5,
+			UsagePercent: 15.0,
+		},
+	}
+	return resources, nil
 }
 
 func (c *AWSClient) GetCosts(start, end time.Time) (float64, error) {
-	// Implémentation AWS
-	return 0, nil
+	// Utiliser AWS Cost Explorer API
+	input := &costexplorer.GetCostAndUsageInput{
+		TimePeriod: &costexplorer.DateInterval{
+			Start: aws.String(start.Format("2006-01-02")),
+			End:   aws.String(end.Format("2006-01-02")),
+		},
+		Granularity: aws.String("DAILY"),
+		Metrics:     []string{"UnblendedCost"},
+	}
+
+	result, err := c.client.GetCostAndUsage(context.Background(), input)
+	if err != nil {
+		return 0, err
+	}
+
+	var totalCost float64
+	for _, data := range result.ResultsByTime {
+		cost, _ := strconv.ParseFloat(*data.Total["UnblendedCost"].Amount, 64)
+		totalCost += cost
+	}
+
+	return totalCost, nil
 }

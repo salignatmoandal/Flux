@@ -15,13 +15,13 @@ func NewMonitorCmd() *cobra.Command {
 		Use:   "monitor",
 		Short: "Monitorer les coûts en temps réel",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			m := monitor.New(interval, export)
+			m := monitor.New(cfg, interval, export)
 			return m.Start()
 		},
 	}
 
 	monitorCmd.Flags().StringVarP(&interval, "interval", "i", "5m", "Intervalle de monitoring")
-	monitorCmd.Flags().StringVarP(&export, "export", "e", "grafana", "Format d'export (grafana/prometheus)")
+	monitorCmd.Flags().StringVarP(&export, "export", "e", "grafana", "Format d'export")
 
 	return monitorCmd
 }

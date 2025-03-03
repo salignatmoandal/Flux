@@ -20,10 +20,13 @@ func NewAnalyzeCmd() *cobra.Command {
                like GPUs, VMs and Kubernetes clusters.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			a := analyzer.NewResourceAnalyzer()
+			if err := a.Initialize(cfg); err != nil {
+				return fmt.Errorf("erreur d'initialisation: %w", err)
+			}
 
 			results, err := a.AnalyzeResources(provider, dryRun)
 			if err != nil {
-				return fmt.Errorf("error during analysis: %w", err)
+				return fmt.Errorf("erreur pendant l'analyse: %w", err)
 			}
 
 			// Affichage des résultats
